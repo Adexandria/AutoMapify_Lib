@@ -11,21 +11,21 @@ namespace Automapify.Services.Utilities
         /// <param name="t">Type of the object to read</param>
         /// <returns>A dictionary</returns>
         /// <exception cref="NullReferenceException"></exception>
-        public static Dictionary<string,string> GetAttributes<T>(this Type t) where T : MapFieldAttribute
+        public static Dictionary<string,T[]> GetAttributes<T>(this Type t) where T : MapFieldAttribute
         {
             var propertyInfo = t.GetProperties(); 
             if (propertyInfo.Length == 0)
                 throw new NullReferenceException("properties not found");
 
-            var properties = new Dictionary<string, string>();
+            var properties = new Dictionary<string,T[]>();
             foreach (var info in propertyInfo)
             {
-                var attributes = info.GetCustomAttributes(true);
+                var attributes = (T[])info.GetCustomAttributes(typeof(T),true);
                 if(attributes.Length == 0)
                     continue;
-                var attribute = (T)attributes[0];
-                properties.Add(info.Name, attribute.FieldName);
+                properties.Add(info.Name,attributes);
             }
+
             return properties;
         }
     }

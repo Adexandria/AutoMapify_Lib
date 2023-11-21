@@ -10,5 +10,6 @@ namespace Automapify.Services.Attributes
     public abstract class MapFieldAttribute:Attribute
     {
         public string FieldName { get; set; }
+        public Type DestinationType { get; set; }
     }
 }

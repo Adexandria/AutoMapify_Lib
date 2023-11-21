@@ -28,19 +28,39 @@ namespace Automappify.Services
 
             foreach (var destinationProperty in destinationProperties)
             {
-                PropertyInfo sourceProperty;
-                mappingAttributes.TryGetValue(destinationProperty.Name, out string property);
-                if (property == null)
+                var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
+
+                if(sourceProperty != null)
                 {
-                    sourceProperty = sourceProperties.Where(s => s.Name == destinationProperty.Name).FirstOrDefault();
+                    var propertyValue = sourceProperty.GetValue(sourceObj);
+                    destinationProperty.SetValue(destinationObj, propertyValue);
+                }
+            }
+        }
+
+        private static PropertyInfo GetProperyInfo<TSource>(Dictionary<string,MapPropertyAttribute[]> mappingAttributes,PropertyInfo[] sourceProperties, PropertyInfo destinationProperty)
+        {
+            PropertyInfo sourceProperty = null;
+
+            mappingAttributes.TryGetValue(destinationProperty.Name, out MapPropertyAttribute[] attributes);
+            if (attributes != null)
+            {
+                var currentAttribute = attributes.Where(s => s.DestinationType == typeof(TSource)).FirstOrDefault();
+                if (currentAttribute == null)
+                {
+                    var attribute = attributes.FirstOrDefault();
+                    sourceProperty = sourceProperties.Where(s => s.Name == attribute.FieldName).FirstOrDefault();
                 }
                 else
                 {
-                    sourceProperty = sourceProperties.Where(s => s.Name == property).FirstOrDefault();
+                    sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.FieldName).FirstOrDefault();
                 }
-                var propertyValue = sourceProperty.GetValue(sourceObj);
-                destinationProperty.SetValue(destinationObj, propertyValue);
             }
+            else
+            {
+                sourceProperty = sourceProperties.Where(s => s.Name == destinationProperty.Name).FirstOrDefault();
+            }
+            return sourceProperty;
         }
 
 
@@ -51,7 +71,7 @@ namespace Automappify.Services
         /// <typeparam name="TDestination">Destination object</typeparam>
         /// <param name="sourceObj">Object to gather information or data from</param>
         /// <returns>Destination object</returns>
-        public static TDestination Map<TSource,TDestination>(this TSource sourceObj)
+        public static TDestination Map<TSource, TDestination>(this TSource sourceObj)
         {
             var destinationObj = Activator.CreateInstance<TDestination>();
 
@@ -65,18 +85,13 @@ namespace Automappify.Services
 
             foreach (var destinationProperty in destinationProperties)
             {
-                PropertyInfo sourceProperty;
-                mappingAttributes.TryGetValue(destinationProperty.Name,out string property);
-                if (property == null)
+                var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
+
+                if (sourceProperty != null)
                 {
-                    sourceProperty = sourceProperties.Where(s => s.Name == destinationProperty.Name).FirstOrDefault();
+                    var propertyValue = sourceProperty.GetValue(sourceObj);
+                    destinationProperty.SetValue(destinationObj, propertyValue);
                 }
-                else
-                {
-                    sourceProperty = sourceProperties.Where(s => s.Name == property).FirstOrDefault();
-                }
-                var propertyValue = sourceProperty.GetValue(sourceObj);
-                destinationProperty.SetValue(destinationObj, propertyValue);
             }
             return destinationObj;
         }
