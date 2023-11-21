@@ -38,31 +38,6 @@ namespace Automappify.Services
             }
         }
 
-        private static PropertyInfo GetProperyInfo<TSource>(Dictionary<string,MapPropertyAttribute[]> mappingAttributes,PropertyInfo[] sourceProperties, PropertyInfo destinationProperty)
-        {
-            PropertyInfo sourceProperty = null;
-
-            mappingAttributes.TryGetValue(destinationProperty.Name, out MapPropertyAttribute[] attributes);
-            if (attributes != null)
-            {
-                var currentAttribute = attributes.Where(s => s.DestinationType == typeof(TSource)).FirstOrDefault();
-                if (currentAttribute == null)
-                {
-                    var attribute = attributes.FirstOrDefault();
-                    sourceProperty = sourceProperties.Where(s => s.Name == attribute.FieldName).FirstOrDefault();
-                }
-                else
-                {
-                    sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.FieldName).FirstOrDefault();
-                }
-            }
-            else
-            {
-                sourceProperty = sourceProperties.Where(s => s.Name == destinationProperty.Name).FirstOrDefault();
-            }
-            return sourceProperty;
-        }
-
 
         /// <summary>
         /// Map values from a source object to a new destination object.
@@ -94,6 +69,32 @@ namespace Automappify.Services
                 }
             }
             return destinationObj;
+        }
+
+
+        private static PropertyInfo GetProperyInfo<TSource>(Dictionary<string, MapPropertyAttribute[]> mappingAttributes, PropertyInfo[] sourceProperties, PropertyInfo destinationProperty)
+        {
+            PropertyInfo sourceProperty = null;
+
+            mappingAttributes.TryGetValue(destinationProperty.Name, out MapPropertyAttribute[] attributes);
+            if (attributes != null)
+            {
+                var currentAttribute = attributes.Where(s => s.DestinationType == typeof(TSource)).FirstOrDefault();
+                if (currentAttribute == null)
+                {
+                    var attribute = attributes.FirstOrDefault();
+                    sourceProperty = sourceProperties.Where(s => s.Name == attribute.FieldName).FirstOrDefault();
+                }
+                else
+                {
+                    sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.FieldName).FirstOrDefault();
+                }
+            }
+            else
+            {
+                sourceProperty = sourceProperties.Where(s => s.Name == destinationProperty.Name).FirstOrDefault();
+            }
+            return sourceProperty;
         }
 
     }

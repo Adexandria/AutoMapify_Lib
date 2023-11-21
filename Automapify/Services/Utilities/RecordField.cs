@@ -20,9 +20,14 @@ namespace Automapify.Services.Utilities
             var properties = new Dictionary<string,T[]>();
             foreach (var info in propertyInfo)
             {
+                var ignoreAttribute = info.GetCustomAttributes(typeof(IgnoreAttribute), true);
+                if (ignoreAttribute != null)
+                     continue;
+
                 var attributes = (T[])info.GetCustomAttributes(typeof(T),true);
                 if(attributes.Length == 0)
                     continue;
+
                 properties.Add(info.Name,attributes);
             }
 

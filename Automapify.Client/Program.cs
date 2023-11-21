@@ -10,6 +10,8 @@ var classroom = new Classroom("Jss2");
 
 var studentDto = student1.Map<Student,StudentDtos>();
 
+studentDto.Map<Classroom,StudentDtos>(classroom);
+
 studentDto.DisplayName();
 
 studentDto.DisplayCLassroom();

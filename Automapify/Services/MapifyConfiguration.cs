@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Automapify.Services
 {
-    public class MapifyConfiguration<TSource,TDestination> 
+    public static class MapifyConfiguration<TSource,TDestination> 
     {
-
     }
 }

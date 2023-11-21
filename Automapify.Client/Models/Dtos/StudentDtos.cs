@@ -9,7 +9,6 @@ namespace Automapify.Client.Models.Dtos
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        [MapProperty("Class")]
         public string Classroom { get; set; }
 
 
