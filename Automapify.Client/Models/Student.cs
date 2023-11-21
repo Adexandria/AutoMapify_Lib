@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Automapify.Client.Models
+{
+    public class Student
+    {
+        public Student(int id, string firstName, string lastName, string dateOfBirth, string _class)
+        {
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            DateOfBirth = DateTime.Parse(dateOfBirth);
+            Class = _class;
+        }
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string Class { get; set; }
+    }
+}

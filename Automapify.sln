@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automapify", "Automapify\Automapify.csproj", "{836A2B27-D225-45EA-AC58-64C67949CADA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automapify.Client", "Automapify.Client\Automapify.Client.csproj", "{7C258707-EE6F-468B-AF2D-284539DC5531}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{836A2B27-D225-45EA-AC58-64C67949CADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{836A2B27-D225-45EA-AC58-64C67949CADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{836A2B27-D225-45EA-AC58-64C67949CADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{836A2B27-D225-45EA-AC58-64C67949CADA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C258707-EE6F-468B-AF2D-284539DC5531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C258707-EE6F-468B-AF2D-284539DC5531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C258707-EE6F-468B-AF2D-284539DC5531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C258707-EE6F-468B-AF2D-284539DC5531}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8C89063-0A30-4386-9E41-4D4541B355D4}
+	EndGlobalSection
+EndGlobal
