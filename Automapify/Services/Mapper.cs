@@ -1,5 +1,7 @@
-﻿using Automapify.Services.Attributes;
+﻿using Automapify.Services;
+using Automapify.Services.Attributes;
 using Automapify.Services.Utilities;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Automappify.Services
@@ -16,7 +18,7 @@ namespace Automappify.Services
         /// <typeparam name="TDestination">Destination object</typeparam>
         /// <param name="destinationObj">Object to store gathered data</param>
         /// <param name="sourceObj">Object to gather information or data from</param>
-        public static void Map<TSource,TDestination>(this TDestination destinationObj, TSource sourceObj)
+        public static void Map<TSource,TDestination>(this TDestination destinationObj, TSource sourceObj, MapifyConfiguration<TSource,TDestination> mapifyConfiguration = null)
         {
             var destinationType = destinationObj.GetType();
 
@@ -28,13 +30,24 @@ namespace Automappify.Services
 
             foreach (var destinationProperty in destinationProperties)
             {
+                var propertyExpression = GetExpressionName(mapifyConfiguration.MapifyTuples.Select(s=>s.DestinationPredicate), destinationProperty.Name);
+                if (string.IsNullOrEmpty(propertyExpression))
+                {
+                    
+                    
+                }
+                else
+                {
+
+                }
                 var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
 
                 if(sourceProperty != null)
                 {
-                    var propertyValue = sourceProperty.GetValue(sourceObj);
-                    destinationProperty.SetValue(destinationObj, propertyValue);
+                   propertyValue = sourceProperty.GetValue(sourceObj);
                 }
+
+                destinationProperty.SetValue(destinationObj, propertyValue);
             }
         }
 
@@ -46,7 +59,7 @@ namespace Automappify.Services
         /// <typeparam name="TDestination">Destination object</typeparam>
         /// <param name="sourceObj">Object to gather information or data from</param>
         /// <returns>Destination object</returns>
-        public static TDestination Map<TSource, TDestination>(this TSource sourceObj)
+        public static TDestination Map<TSource, TDestination>(this TSource sourceObj, MapifyConfiguration<TSource, TDestination> mapifyConfiguration = null)
         {
             var destinationObj = Activator.CreateInstance<TDestination>();
 
@@ -79,7 +92,7 @@ namespace Automappify.Services
             mappingAttributes.TryGetValue(destinationProperty.Name, out MapPropertyAttribute[] attributes);
             if (attributes != null)
             {
-                var currentAttribute = attributes.Where(s => s.DestinationType == typeof(TSource)).FirstOrDefault();
+                var currentAttribute = attributes.Where(s => s.SourceType == typeof(TSource)).FirstOrDefault();
                 if (currentAttribute == null)
                 {
                     var attribute = attributes.FirstOrDefault();
@@ -95,6 +108,20 @@ namespace Automappify.Services
                 sourceProperty = sourceProperties.Where(s => s.Name == destinationProperty.Name).FirstOrDefault();
             }
             return sourceProperty;
+        }
+
+        private static string GetSourceExpression<TSource>(IEnumerable<Expression<Func<TSource,object>>> expressions, string propertyName)
+        {
+            List<MemberExpression> memberExprs = (List<MemberExpression>)expressions.Select(s => s.Body);
+            var memberExpr = memberExprs.Where(s=> s.Member.Name == propertyName).FirstOrDefault();
+            return memberExpr.Member.Name;
+        }
+
+        private static string GetExpressionName<TDestination>(IEnumerable<Expression<Func<TDestination, object>>> expressions, string propertyName)
+        {
+            List<MemberExpression> memberExprs = (List<MemberExpression>)expressions.Select(s => s.Body);
+            var memberExpr = memberExprs.Where(s => s.Member.Name == propertyName).FirstOrDefault();
+            return memberExpr.Member.Name;
         }
 
     }

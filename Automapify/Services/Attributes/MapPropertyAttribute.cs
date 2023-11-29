@@ -16,7 +16,7 @@ namespace Automapify.Services.Attributes
 
             FieldName = fieldName;
 
-            DestinationType = type ?? throw new ArgumentNullException("field name", "Field name is invalid");
+            SourceType = type ?? throw new ArgumentNullException("field name", "Field name is invalid");
         }
 
         public MapPropertyAttribute(string fieldName)
