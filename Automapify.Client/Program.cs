@@ -16,7 +16,9 @@ studentDto.Map<Student,StudentDtos>(student1,MappingService.StudentConfig());
 
 studentDto.Map<Classroom,StudentDtos>(classroom);
 
-studentDto.DisplayName();
+//studentDto.DisplayName();
+
+studentDto.DisplayFullName();
 
 studentDto.DisplayCLassroom();
 

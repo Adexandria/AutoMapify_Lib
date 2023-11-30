@@ -1,4 +1,5 @@
-﻿using Automapify.Services;
+﻿using Automapify.Models;
+using Automapify.Services;
 using Automapify.Services.Attributes;
 using Automapify.Services.Utilities;
 using System.Linq.Expressions;
@@ -30,24 +31,26 @@ namespace Automappify.Services
 
             foreach (var destinationProperty in destinationProperties)
             {
-                var propertyExpression = GetExpressionName(mapifyConfiguration.MapifyTuples.Select(s=>s.DestinationPredicate), destinationProperty.Name);
-                if (string.IsNullOrEmpty(propertyExpression))
+                object propertyValue = null;
+                var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
+                if (propertyExpression != null)
                 {
-                    
-                    
+                   propertyValue = propertyExpression.Invoke(sourceObj);
                 }
                 else
                 {
-
+                    var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
+                    if (sourceProperty != null)
+                    {
+                        propertyValue = sourceProperty.GetValue(sourceObj);
+                    }
                 }
-                var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
 
-                if(sourceProperty != null)
+                if(propertyValue != null)
                 {
-                   propertyValue = sourceProperty.GetValue(sourceObj);
+                    destinationProperty.SetValue(destinationObj, propertyValue);
                 }
-
-                destinationProperty.SetValue(destinationObj, propertyValue);
+               
             }
         }
 
@@ -73,11 +76,23 @@ namespace Automappify.Services
 
             foreach (var destinationProperty in destinationProperties)
             {
-                var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
-
-                if (sourceProperty != null)
+                object propertyValue = null;
+                var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
+                if (propertyExpression != null)
                 {
-                    var propertyValue = sourceProperty.GetValue(sourceObj);
+                    propertyValue = propertyExpression.Invoke(sourceObj);
+                }
+                else
+                {
+                    var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
+                    if (sourceProperty != null)
+                    {
+                        propertyValue = sourceProperty.GetValue(sourceObj);
+                    }
+                }
+
+                if (propertyValue != null)
+                {
                     destinationProperty.SetValue(destinationObj, propertyValue);
                 }
             }
@@ -110,19 +125,20 @@ namespace Automappify.Services
             return sourceProperty;
         }
 
-        private static string GetSourceExpression<TSource>(IEnumerable<Expression<Func<TSource,object>>> expressions, string propertyName)
-        {
-            List<MemberExpression> memberExprs = (List<MemberExpression>)expressions.Select(s => s.Body);
-            var memberExpr = memberExprs.Where(s=> s.Member.Name == propertyName).FirstOrDefault();
-            return memberExpr.Member.Name;
-        }
 
-        private static string GetExpressionName<TDestination>(IEnumerable<Expression<Func<TDestination, object>>> expressions, string propertyName)
+        private static Func<TSource, object> GetSourceExpression<TSource,TDestination>(IList<MapifyTuple<TSource,TDestination>> mapifyTuples, string propertyName)
         {
-            List<MemberExpression> memberExprs = (List<MemberExpression>)expressions.Select(s => s.Body);
-            var memberExpr = memberExprs.Where(s => s.Member.Name == propertyName).FirstOrDefault();
-            return memberExpr.Member.Name;
-        }
+            if (mapifyTuples == null)
+                return default;
 
+            var memberExpr = mapifyTuples.Where(s => s.DestinationPredicate.Member.Name == propertyName).FirstOrDefault();
+            if(memberExpr != null)
+            {
+               var compiledDelegate =  memberExpr.SourcePredicate.Compile();
+                return compiledDelegate;
+            }
+
+            return default;
+        }
     }
 }

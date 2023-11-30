@@ -2,14 +2,13 @@
 
 namespace Automapify.Services.Utilities
 {
-    public class ExpressionDto
+    public class ExpressionDto<TSource>
     {
-      public ExpressionDto(string name, Expression expression)
+      public ExpressionDto(string name, Func<TSource, object> expression)
       {
-            Name = name;
             Expression = expression;
       }
        public string Name { get; set; }
-       public Expression Expression { get; set; }
+       public Func<TSource, object> Expression { get; set; }
     }
 }
