@@ -21,7 +21,7 @@ namespace Automapify.Services.Utilities
             foreach (var info in propertyInfo)
             {
                 var ignoreAttribute = info.GetCustomAttributes(typeof(IgnoreAttribute), true);
-                if (ignoreAttribute != null)
+                if (ignoreAttribute.Length != 0)
                      continue;
 
                 var attributes = (T[])info.GetCustomAttributes(typeof(T),true);

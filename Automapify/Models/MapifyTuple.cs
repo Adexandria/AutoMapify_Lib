@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 
 namespace Automapify.Models
 {
-    internal class MapifyTuple<TSource,TDestination>
+    public class MapifyTuple<TSource,TDestination>
     {
-        public MapifyTuple(TSource source, TDestination destination)
+        public MapifyTuple()
         {
-            Source = source.GetType();
-            Destination = destination.GetType();
+
+        }
+        public MapifyTuple(Expression<Func<TSource,object>> _sourcePredicate, Expression<Func<TDestination, object>> _destinationpredicate)
+        {
+            SourcePredicate = _sourcePredicate;
+            DestinationPredicate = (MemberExpression)_destinationpredicate.Body;
         }
 
-        public Type Source { get; set; }
-        public Type Destination { get; set; }
+        public MemberExpression DestinationPredicate { get; set; }
+
+        public Expression<Func<TSource, object>> SourcePredicate { get; set; }
+
     }
 }

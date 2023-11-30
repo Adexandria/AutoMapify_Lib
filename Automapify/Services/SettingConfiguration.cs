@@ -8,6 +8,10 @@ namespace Automapify.Services
 {
     public static class SettingConfiguration<TSource,TDestination>
     {
-     
+      public static MapifyConfiguration<TSource,TDestination> CreateConfiguration()
+      {
+         return new MapifyConfiguration<TSource, TDestination>();
+      }
+
     }
 }
