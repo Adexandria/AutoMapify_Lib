@@ -1,30 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Automapify.Services.Attributes
+﻿namespace Automapify.Services.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field,AllowMultiple = true)]
-    public class MapPropertyAttribute : MapFieldAttribute
+    /// <summary>
+    /// Property attributes used to store property name and source type
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property,AllowMultiple = true)]
+    public class MapPropertyAttribute : MapAttribute
     {
-        public MapPropertyAttribute(Type type,string fieldName)
+        /// <summary>
+        /// A constructor
+        /// </summary>
+        /// <param name="type">Type of the source</param>
+        /// <param name="propertyName">Property name</param>
+        /// <exception cref="ArgumentNullException">If property name is null or empty</exception>
+        public MapPropertyAttribute(Type type,string propertyName)
         {
-            if (string.IsNullOrEmpty(fieldName) || string.IsNullOrWhiteSpace(fieldName))
-                throw new ArgumentNullException("field name", "Field name is invalid");
+            if (string.IsNullOrEmpty(propertyName) || string.IsNullOrWhiteSpace(propertyName))
+                throw new ArgumentNullException("property name", "property name is invalid");
 
-            FieldName = fieldName;
+            PropertyName = propertyName;
 
             SourceType = type ?? throw new ArgumentNullException("field name", "Field name is invalid");
         }
 
-        public MapPropertyAttribute(string fieldName)
+        /// <summary>
+        /// A constructor
+        /// </summary>
+        /// <param name="propertyName">Property name</param>
+        /// <exception cref="ArgumentNullException">If property name is null or empty</exception>
+        public MapPropertyAttribute(string propertyName)
         {
-            if (string.IsNullOrEmpty(fieldName) || string.IsNullOrWhiteSpace(fieldName))
-                throw new ArgumentNullException("field name", "Field name is invalid");
+            if (string.IsNullOrEmpty(propertyName) || string.IsNullOrWhiteSpace(propertyName))
+                throw new ArgumentNullException("property name", "property name is invalid");
 
-            FieldName = fieldName;
+            PropertyName = propertyName;
         }
     }
 }

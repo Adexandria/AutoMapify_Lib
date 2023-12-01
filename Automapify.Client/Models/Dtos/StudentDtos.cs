@@ -8,18 +8,12 @@ namespace Automapify.Client.Models.Dtos
         public int Id { get; set; }
 
         public string Name { get; set; }
-        public string FirstName { get; set; }
+        public int Age { get; set; }
+        public DateTime DOB { get; set; }
+        public bool IsDeleted { get; set; }
 
-        public string LastName { get; set; }
-
-        [MapProperty(typeof(Classroom),"Room")]
+        [MapProperty(typeof(Classroom), "Room")]
         public string Classroom { get; set; }
-
-
-        public void DisplayName()
-        {
-            Console.WriteLine($"{FirstName} {LastName}");
-        }
 
         public void DisplayFullName()
         {
@@ -30,5 +24,11 @@ namespace Automapify.Client.Models.Dtos
         {
             Console.WriteLine(Classroom);
         }
+
+        public void DisplayAge()
+        {
+            Console.WriteLine(Age);
+        }
     }
+
 }
