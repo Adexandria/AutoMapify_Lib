@@ -1,8 +1,8 @@
 # Automapify
-This is a dotnet library used to map from one object to another without setting up services or configuration.
+This dotnet library facilitates object mapping without the need for service setup or configuration.
 
 ### Basic Usage
-There are two ways to use this tool; Attributes and Configuration
+There are two methods for utilizing this tool: Attributes and Configuration
 #### **Attributes**
 
 - Specify the property name from the source in the destination object using the `MapProperty` attribute
