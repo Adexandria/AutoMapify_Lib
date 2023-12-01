@@ -5,7 +5,7 @@ This is a dotnet library used to map from one object to another without setting 
 There are two ways to use this tool; Attributes and Configuration
 #### **Attributes**
 
-- Specify the source name in the destination object
+- Specify the property name from the source in the destination object using the `MapProperty` attribute
 
    ```csharp
         public int Id { get; set; }
@@ -33,7 +33,7 @@ There are two ways to use this tool; Attributes and Configuration
 
 #### **Configuration**
 
-- Set up configuration to display how values will be mapped
+- Establish a configuration to illustrate the mapping of values.
 
  ```csharp
       public static class MappingService
