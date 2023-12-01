@@ -1,4 +1,5 @@
-﻿using Automapify.Client.Models;
+﻿using Automapify.Client.Extensions;
+using Automapify.Client.Models;
 using Automapify.Client.Models.Dtos;
 using Automapify.Services;
 
@@ -9,8 +10,11 @@ namespace Automapify.Client
         public static MapifyConfiguration<Student,StudentDtos> StudentConfig()
         {
             return SettingConfiguration<Student, StudentDtos>
-                .CreateConfiguration()
-                .Map(d => d.Name, s => $"{s.FirstName} {s.LastName}");
+                .CreateConfig()
+                .Map(d => d.Name, s => $"{s.FirstName} {s.LastName}")
+                .Map(d => d.Age, s => s.DateOfBirth.ToAge())
+                .Map(d=>d.DOB, s =>s.DateOfBirth)
+                .Map(d=>d.IsDeleted, s => false);
         }
     }
 }
