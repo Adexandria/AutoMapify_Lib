@@ -2,7 +2,6 @@
 using Automapify.Services;
 using Automapify.Services.Attributes;
 using Automapify.Services.Utilities;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Automappify.Services
@@ -12,6 +11,7 @@ namespace Automappify.Services
     /// </summary>
     public static class Mapper
     {
+
         /// <summary>
         /// Map values from a source object to an existing destination object
         /// </summary>
@@ -26,31 +26,36 @@ namespace Automappify.Services
             var destinationProperties = destinationType.GetProperties();
 
             var sourceProperties = sourceObj.GetType().GetProperties();
-
-            var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
-
-            foreach (var destinationProperty in destinationProperties)
+            try
             {
-                object propertyValue = null;
-                var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
-                if (propertyExpression != null)
+                var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
+
+                foreach (var destinationProperty in destinationProperties)
                 {
-                   propertyValue = propertyExpression.Invoke(sourceObj);
-                }
-                else
-                {
-                    var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
-                    if (sourceProperty != null)
+                    object propertyValue = null;
+                    var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
+                    if (propertyExpression != null)
                     {
-                        propertyValue = sourceProperty.GetValue(sourceObj);
+                        propertyValue = propertyExpression.Invoke(sourceObj);
+                    }
+                    else
+                    {
+                        var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
+                        if (sourceProperty != null)
+                        {
+                            propertyValue = sourceProperty.GetValue(sourceObj);
+                        }
+                    }
+
+                    if (propertyValue != null)
+                    {
+                        destinationProperty.SetValue(destinationObj, propertyValue);
                     }
                 }
-
-                if(propertyValue != null)
-                {
-                    destinationProperty.SetValue(destinationObj, propertyValue);
-                }
-               
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -72,31 +77,38 @@ namespace Automappify.Services
 
             var sourceProperties = sourceObj.GetType().GetProperties();
 
-            var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
-
-            foreach (var destinationProperty in destinationProperties)
+            try
             {
-                object propertyValue = null;
-                var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
-                if (propertyExpression != null)
+                var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
+
+                foreach (var destinationProperty in destinationProperties)
                 {
-                    propertyValue = propertyExpression.Invoke(sourceObj);
-                }
-                else
-                {
-                    var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
-                    if (sourceProperty != null)
+                    object propertyValue = null;
+                    var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
+                    if (propertyExpression != null)
                     {
-                        propertyValue = sourceProperty.GetValue(sourceObj);
+                        propertyValue = propertyExpression.Invoke(sourceObj);
+                    }
+                    else
+                    {
+                        var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
+                        if (sourceProperty != null)
+                        {
+                            propertyValue = sourceProperty.GetValue(sourceObj);
+                        }
+                    }
+
+                    if (propertyValue != null)
+                    {
+                        destinationProperty.SetValue(destinationObj, propertyValue);
                     }
                 }
-
-                if (propertyValue != null)
-                {
-                    destinationProperty.SetValue(destinationObj, propertyValue);
-                }
+                return destinationObj;
             }
-            return destinationObj;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
         }
 
 
@@ -111,11 +123,11 @@ namespace Automappify.Services
                 if (currentAttribute == null)
                 {
                     var attribute = attributes.FirstOrDefault();
-                    sourceProperty = sourceProperties.Where(s => s.Name == attribute.FieldName).FirstOrDefault();
+                    sourceProperty = sourceProperties.Where(s => s.Name == attribute.PropertyName).FirstOrDefault();
                 }
                 else
                 {
-                    sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.FieldName).FirstOrDefault();
+                    sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.PropertyName).FirstOrDefault();
                 }
             }
             else
@@ -131,7 +143,7 @@ namespace Automappify.Services
             if (mapifyTuples == null)
                 return default;
 
-            var memberExpr = mapifyTuples.Where(s => s.DestinationPredicate.Member.Name == propertyName).FirstOrDefault();
+            var memberExpr = mapifyTuples.Where(s => s.DestinationPredicate?.Member?.Name == propertyName).FirstOrDefault();
             if(memberExpr != null)
             {
                var compiledDelegate =  memberExpr.SourcePredicate.Compile();

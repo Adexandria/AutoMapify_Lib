@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Automapify.Services.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    /// <summary>
+    /// Property attribute to ignore property
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
     public class IgnoreAttribute : Attribute
     {
     }
