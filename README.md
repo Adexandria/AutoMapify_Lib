@@ -3,7 +3,7 @@ This is a dotnet library used to map from one object to another without setting 
 
 ### Basic Usage
 There are two ways to use this tool; Attributes and Configuration
-#### Attribute
+#### **Attributes**
 
 - Specify the source name in the destination object
 
@@ -31,7 +31,7 @@ There are two ways to use this tool; Attributes and Configuration
     studentDto.Map<Student,StudentDtos>(student1);
   ```
 
-#### Configuration
+#### **Configuration**
 
 - Set up configuration to display how values will be mapped
 
