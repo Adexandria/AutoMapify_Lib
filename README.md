@@ -2,7 +2,7 @@
 This is a dotnet library used to map from one object to another without setting up services or configuration.
 
 ### Basic Usage
-
+There are two ways to use this tool; Attributes and Configuration
 #### Attribute
 
 - Specify the source name in the destination object
