@@ -15,7 +15,7 @@ namespace Automapify.Services
         /// </summary>
         public MapifyConfiguration()
         {
-            MapifyTuples = new List<MapifyTuple<TSource,TDestination>>();
+            MapifyTuples = new List<MapifyTuple>();
         }
 
         /// <summary>
@@ -24,15 +24,33 @@ namespace Automapify.Services
         /// <param name="destinationPredicate">Destination expression</param>
         /// <param name="sourcePredicate">Source expression</param>
         /// <returns></returns>
-        public MapifyConfiguration<TSource,TDestination> Map(Expression<Func<TDestination,object>> destinationPredicate, Expression<Func<TSource, object>> sourcePredicate)
+        public MapifyConfiguration<TSource,TDestination> Map<DestinationMember,SourceMember>(Expression<Func<TDestination, DestinationMember>> destinationPredicate, Expression<Func<TSource, SourceMember>> sourcePredicate)
         {
-            MapifyTuples.Add(new MapifyTuple<TSource, TDestination>(sourcePredicate, destinationPredicate));
+            MapifyTuples.Add(new MapifyTuple(GetMemberExpressionName(destinationPredicate), sourcePredicate));
             return this;
+        }
+
+
+        /// <summary>
+        /// Get expression name from member
+        /// </summary>
+        /// <typeparam name="T">Type of object to convert to or from</typeparam>
+        /// <typeparam name="TObject">Data type</typeparam>
+        /// <param name="exp">Expression</param>
+        /// <returns>Name of the member</returns>
+        private string GetMemberExpressionName<T, TObject>(Expression<Func<T, TObject>> exp)
+        {
+            MemberExpression member = exp.Body as MemberExpression;
+            var currentMember = member ?? (exp.Body is UnaryExpression unary ? unary.Operand as MemberExpression : null);
+            if(currentMember != null)
+                return currentMember.Member?.Name;
+
+            return default;
         }
 
         /// <summary>
         /// Stores the all source and destination expressions
         /// </summary>
-        public IList<MapifyTuple<TSource,TDestination>> MapifyTuples { get; set; }
+        public IList<MapifyTuple> MapifyTuples { get; set; }
     }
 }

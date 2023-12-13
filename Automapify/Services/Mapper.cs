@@ -36,7 +36,7 @@ namespace Automappify.Services
                     var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
                     if (propertyExpression != null)
                     {
-                        propertyValue = propertyExpression.Invoke(sourceObj);
+                        propertyValue = propertyExpression.DynamicInvoke(sourceObj);
                     }
                     else
                     {
@@ -87,7 +87,7 @@ namespace Automappify.Services
                     var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
                     if (propertyExpression != null)
                     {
-                        propertyValue = propertyExpression.Invoke(sourceObj);
+                        propertyValue = propertyExpression.DynamicInvoke(sourceObj);
                     }
                     else
                     {
@@ -138,16 +138,15 @@ namespace Automappify.Services
         }
 
 
-        private static Func<TSource, object> GetSourceExpression<TSource,TDestination>(IList<MapifyTuple<TSource,TDestination>> mapifyTuples, string propertyName)
+        private static Delegate GetSourceExpression(IList<MapifyTuple> mapifyTuples, string propertyName)
         {
             if (mapifyTuples == null)
                 return default;
 
-            var memberExpr = mapifyTuples.Where(s => s.DestinationPredicate?.Member?.Name == propertyName).FirstOrDefault();
+            var memberExpr = mapifyTuples.Where(s => s.DestinationMemberName == propertyName).FirstOrDefault();
             if(memberExpr != null)
             {
-               var compiledDelegate =  memberExpr.SourcePredicate.Compile();
-                return compiledDelegate;
+                return memberExpr.SourceExpression;
             }
 
             return default;
