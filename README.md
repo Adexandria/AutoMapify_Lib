@@ -22,13 +22,13 @@ There are two methods for utilizing this tool: Attributes and Configuration
 
 ##### Map to a new object
 ```csharp
-    var studentDto = student1.Map<Student,StudentDtos>();
+    var studentDto = student1.Map<Student,StudentDto>();
 ```
 
 ##### Map to an existing object
 
   ```csharp
-    studentDto.Map<Student,StudentDtos>(student1);
+    studentDto.Map<Student,StudentDto>(student1);
   ```
 
 #### **Configuration**
@@ -40,12 +40,12 @@ There are two methods for utilizing this tool: Attributes and Configuration
     {
         public static MapifyConfiguration<Student,StudentDtos> StudentConfig()
         {
-            return SettingConfiguration<Student, StudentDtos>
-                .CreateConfig()
+            return new MapifyConfigurationBuilder<Student, StudentDto>()
                 .Map(d => d.Name, s => $"{s.FirstName} {s.LastName}")
                 .Map(d => d.Age, s => s.DateOfBirth.ToAge())
-                .Map(d=>d.DOB, s =>s.DateOfBirth)
-                .Map(d=>d.IsDeleted, s => false);
+                .Map(d=>d.DOB, s => s.DateOfBirth)
+                .Map(d=>d.IsDeleted, s => false)
+                .CreateConfig();
         }
     }
  ```
@@ -53,12 +53,12 @@ There are two methods for utilizing this tool: Attributes and Configuration
 ##### Map to a new object
 
   ```csharp
-    var studentDto = student1.Map<Student,StudentDtos>(MappingService.StudentConfig());
+    var studentDto = student.Map<Student,StudentDto>(MappingService.StudentConfig());
   ```
 
 ### Map to an existing object
 
 ```csharp
-studentDto.Map<Student,StudentDtos>(student1,MappingService.StudentConfig());
+   studentDto.Map<Student,StudentDto>(student1,MappingService.StudentConfig());
 ```
 
