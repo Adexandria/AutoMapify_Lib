@@ -7,12 +7,12 @@ namespace Automapify.Client
 {
     public static class MappingService
     {
-        public static MapifyConfiguration<Student,StudentDtos> StudentConfig()
+        public static MapifyConfiguration<Student,StudentDto> StudentConfig()
         {
-            return new MapifyConfigurationBuilder<Student, StudentDtos>()
+            return new MapifyConfigurationBuilder<Student, StudentDto>()
                 .Map(d => d.Name, s => $"{s.FirstName} {s.LastName}")
                 .Map(d => d.Age, s => s.DateOfBirth.ToAge())
-                .Map(d=>d.DOB, s =>s.DateOfBirth)
+                .Map(d=>d.DOB, s => s.DateOfBirth)
                 .Map(d=>d.IsDeleted, s => false)
                 .CreateConfig();
         }

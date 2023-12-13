@@ -3,7 +3,7 @@
 
 namespace Automapify.Client.Models.Dtos
 {
-    public class StudentDtos
+    public class StudentDto
     {
         public int Id { get; set; }
 

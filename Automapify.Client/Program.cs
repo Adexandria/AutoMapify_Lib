@@ -9,12 +9,12 @@ var student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1");
 
 var classroom = new Classroom("Jss2");
 
-var studentDto = new StudentDtos();
+var studentDto = new StudentDto();
 
 
-studentDto.Map<Student,StudentDtos>(student,MappingService.StudentConfig());
+studentDto.Map<Student,StudentDto>(student,MappingService.StudentConfig());
 
-studentDto.Map<Classroom,StudentDtos>(classroom);
+studentDto.Map<Classroom,StudentDto>(classroom);
 
 studentDto.DisplayFullName();
 
