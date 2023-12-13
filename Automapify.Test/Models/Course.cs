@@ -4,6 +4,7 @@
     {
         public Course(string name, string courseCode)
         {
+            Id = 1;
             Name = name;
             CourseCode = courseCode;
         }

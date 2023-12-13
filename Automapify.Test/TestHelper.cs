@@ -20,13 +20,14 @@ namespace Automapify.Test
         
         private MapifyConfiguration<Classroom, ClassroomDto> SetupConfiguration()
         {
-            MapifyConfiguration = SettingConfiguration<Classroom,ClassroomDto>.CreateConfig()
+            MapifyConfiguration = new MapifyConfigurationBuilder<Classroom,ClassroomDto>()
                 .Map(d=>d.Name,s=>s.Name)
                 .Map(d=>d.NoOfLecturers, s=>s.NumberOfTeachers)
                 .Map(d=>d.NoOfStudents, s=>s.NumberOfStudents)
                 .Map(d=>d.LeadLecturers, s=>s.Courses.Select(s=>s.LeadLecturer.Name).ToList())
                 .Map(d=>d.IsActive, s=>s.NumberOfTeachers > 0 && s.NumberOfStudents > 0)
-                .Map(d=> d.Code, s=>s.ClassCode.ToString());
+                .Map(d=> d.Code, s=>s.ClassCode.ToString())
+                .CreateConfig();
             return MapifyConfiguration;
         }
         protected MapifyConfiguration<Classroom,ClassroomDto> MapifyConfiguration { get; set; }
