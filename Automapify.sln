@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automapify", "Automapify\Au
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automapify.Client", "Automapify.Client\Automapify.Client.csproj", "{7C258707-EE6F-468B-AF2D-284539DC5531}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automapify.Test", "Automapify.Test\Automapify.Test.csproj", "{1B029BA4-3409-450E-8B37-0D2510A6B97B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7C258707-EE6F-468B-AF2D-284539DC5531}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C258707-EE6F-468B-AF2D-284539DC5531}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C258707-EE6F-468B-AF2D-284539DC5531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B029BA4-3409-450E-8B37-0D2510A6B97B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B029BA4-3409-450E-8B37-0D2510A6B97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B029BA4-3409-450E-8B37-0D2510A6B97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B029BA4-3409-450E-8B37-0D2510A6B97B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
