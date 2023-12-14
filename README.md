@@ -56,7 +56,7 @@ There are two methods for utilizing this tool: Attributes and Configuration
     var studentDto = student.Map<Student,StudentDto>(MappingService.StudentConfig());
   ```
 
-### Map to an existing object
+##### Map to an existing object
 
 ```csharp
    studentDto.Map<Student,StudentDto>(student1,MappingService.StudentConfig());
