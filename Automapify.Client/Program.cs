@@ -4,6 +4,7 @@ using Automapify.Client;
 using Automapify.Client.Models;
 using Automapify.Client.Models.Dtos;
 using Automappify.Services;
+using BenchmarkDotNet.Running;
 
 var student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1");
 
@@ -12,9 +13,9 @@ var classroom = new Classroom("Jss2");
 var studentDto = new StudentDto();
 
 
-studentDto.Map<Student,StudentDto>(student,MappingService.StudentConfig());
+studentDto.Map(student,MappingService.StudentConfig());
 
-studentDto.Map<Classroom,StudentDto>(classroom);
+studentDto.Map(classroom);
 
 studentDto.DisplayFullName();
 
@@ -22,5 +23,5 @@ studentDto.DisplayCLassroom();
 
 studentDto.DisplayAge();
 
-
+var summary = BenchmarkRunner.Run(typeof(BenchmarkTest));
 
