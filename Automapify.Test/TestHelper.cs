@@ -18,7 +18,7 @@ namespace Automapify.Test
         }
 
         
-        private MapifyConfiguration<Classroom, ClassroomDto> SetupConfiguration()
+        private MapifyConfiguration SetupConfiguration()
         {
             MapifyConfiguration = new MapifyConfigurationBuilder<Classroom,ClassroomDto>()
                 .Map(d=>d.Name,s=>s.Name)
@@ -30,7 +30,7 @@ namespace Automapify.Test
                 .CreateConfig();
             return MapifyConfiguration;
         }
-        protected MapifyConfiguration<Classroom,ClassroomDto> MapifyConfiguration { get; set; }
+        protected MapifyConfiguration MapifyConfiguration { get; set; }
         protected Classroom TestClassroom { get; set; }
     }
 }

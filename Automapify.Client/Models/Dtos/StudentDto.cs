@@ -15,6 +15,9 @@ namespace Automapify.Client.Models.Dtos
         [MapProperty(typeof(Classroom), "Room")]
         public string Classroom { get; set; }
 
+        [MapProperty("Classroom")]
+        public Classroom Room { get; set; }
+
         public void DisplayFullName()
         {
             Console.WriteLine(Name);

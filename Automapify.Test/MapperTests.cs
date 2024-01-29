@@ -28,7 +28,7 @@ namespace Automapify.Test
         [Test]
         public void ShouldMapFromSourceObjectToNewObjectUsingConfiguration()
         {
-            var classroomDto = TestClassroom.Map(MapifyConfiguration);
+            var classroomDto = TestClassroom.Map<Classroom,ClassroomDto>(MapifyConfiguration);
 
             Assert.Multiple(() =>
             {
