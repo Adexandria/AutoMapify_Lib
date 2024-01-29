@@ -1,5 +1,5 @@
 # Automapify
-This dotnet library facilitates object mapping without the need for service setup or configuration.
+This dotnet library facilitates object mappings without the need for service setup or configuration.
 
 ### Basic Usage
 There are two methods for utilizing this tool: Attributes and Configuration
@@ -18,6 +18,8 @@ There are two methods for utilizing this tool: Attributes and Configuration
         public DateTime DOB { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public Classroom Room {get; set; }
    ```
 
 ##### Map to a new object
@@ -45,6 +47,7 @@ There are two methods for utilizing this tool: Attributes and Configuration
                 .Map(d => d.Age, s => s.DateOfBirth.ToAge())
                 .Map(d=>d.DOB, s => s.DateOfBirth)
                 .Map(d=>d.IsDeleted, s => false)
+                .Map(d=>d.Classroom, s=> s.Room)
                 .CreateConfig();
         }
     }
@@ -61,4 +64,3 @@ There are two methods for utilizing this tool: Attributes and Configuration
 ```csharp
    studentDto.Map<Student,StudentDto>(student1,MappingService.StudentConfig());
 ```
-
