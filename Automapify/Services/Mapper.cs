@@ -19,7 +19,7 @@ namespace Automappify.Services
         /// <typeparam name="TDestination">Destination object</typeparam>
         /// <param name="destinationObj">Object to store gathered data</param>
         /// <param name="sourceObj">Object to gather information or data from</param>
-        public static void Map<TSource,TDestination>(this TDestination destinationObj, TSource sourceObj, MapifyConfiguration<TSource,TDestination> mapifyConfiguration = null)
+        public static void Map<TSource,TDestination>(this TDestination destinationObj, TSource sourceObj, MapifyConfiguration mapifyConfiguration = null)
         {
             var destinationType = destinationObj.GetType();
 
@@ -30,28 +30,9 @@ namespace Automappify.Services
             {
                 var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
 
-                foreach (var destinationProperty in destinationProperties)
-                {
-                    object propertyValue = null;
-                    var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
-                    if (propertyExpression != null)
-                    {
-                        propertyValue = propertyExpression.DynamicInvoke(sourceObj);
-                    }
-                    else
-                    {
-                        var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
-                        if (sourceProperty != null)
-                        {
-                            propertyValue = sourceProperty.GetValue(sourceObj);
-                        }
-                    }
-
-                    if (propertyValue != null)
-                    {
-                        destinationProperty.SetValue(destinationObj, propertyValue);
-                    }
-                }
+                MapProperties(destinationProperties, sourceProperties,
+                    mapifyConfiguration, sourceObj, destinationObj,
+                    mappingAttributes);
             }
             catch (Exception ex)
             {
@@ -67,7 +48,7 @@ namespace Automappify.Services
         /// <typeparam name="TDestination">Destination object</typeparam>
         /// <param name="sourceObj">Object to gather information or data from</param>
         /// <returns>Destination object</returns>
-        public static TDestination Map<TSource, TDestination>(this TSource sourceObj, MapifyConfiguration<TSource, TDestination> mapifyConfiguration = null)
+        public static TDestination Map<TSource, TDestination>(this TSource sourceObj, MapifyConfiguration mapifyConfiguration = null)
         {
             var destinationObj = Activator.CreateInstance<TDestination>();
 
@@ -81,28 +62,10 @@ namespace Automappify.Services
             {
                 var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
 
-                foreach (var destinationProperty in destinationProperties)
-                {
-                    object propertyValue = null;
-                    var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
-                    if (propertyExpression != null)
-                    {
-                        propertyValue = propertyExpression.DynamicInvoke(sourceObj);
-                    }
-                    else
-                    {
-                        var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
-                        if (sourceProperty != null)
-                        {
-                            propertyValue = sourceProperty.GetValue(sourceObj);
-                        }
-                    }
+                MapProperties(destinationProperties, sourceProperties,
+                    mapifyConfiguration,sourceObj,destinationObj, 
+                    mappingAttributes);
 
-                    if (propertyValue != null)
-                    {
-                        destinationProperty.SetValue(destinationObj, propertyValue);
-                    }
-                }
                 return destinationObj;
             }
             catch (Exception ex)
@@ -111,6 +74,34 @@ namespace Automappify.Services
             }
         }
 
+
+        private static void MapProperties<TSource,TDestination>(PropertyInfo[] destinationProperties,
+            PropertyInfo[] sourceProperties,MapifyConfiguration mapifyConfiguration,
+            TSource sourceObj, TDestination destinationObj,Dictionary<string, MapPropertyAttribute[]> mappingAttributes)
+        {
+            foreach (var destinationProperty in destinationProperties)
+            {
+                object propertyValue = null;
+                var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
+                if (propertyExpression != null)
+                {
+                    propertyValue = propertyExpression.DynamicInvoke(sourceObj);
+                }
+                else
+                {
+                    var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
+                    if (sourceProperty != null)
+                    {
+                        propertyValue = sourceProperty.GetValue(sourceObj);
+                    }
+                }
+
+                if (propertyValue != null)
+                {
+                    destinationProperty.SetValue(destinationObj, propertyValue);
+                }
+            }
+        }
 
         private static PropertyInfo GetProperyInfo<TSource>(Dictionary<string, MapPropertyAttribute[]> mappingAttributes, PropertyInfo[] sourceProperties, PropertyInfo destinationProperty)
         {

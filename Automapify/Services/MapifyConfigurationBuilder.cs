@@ -40,9 +40,9 @@ namespace Automapify.Services
             return default;
         }
 
-        public MapifyConfiguration<TSource, TDestination> CreateConfig()
+        public MapifyConfiguration CreateConfig()
         {
-            return new MapifyConfiguration<TSource, TDestination>(mapifyTuples);
+            return new MapifyConfiguration(mapifyTuples);
         }
 
         private IList<MapifyTuple> mapifyTuples;
