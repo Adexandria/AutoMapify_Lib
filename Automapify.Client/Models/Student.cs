@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Automapify.Client.Models.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,6 @@ namespace Automapify.Client.Models
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Class { get; set; }
+        public Classroom Classroom { get; set; }
     }
 }

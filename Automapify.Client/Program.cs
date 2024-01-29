@@ -10,6 +10,8 @@ var student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1");
 
 var classroom = new Classroom("Jss2");
 
+student.Classroom = classroom;
+
 var studentDto = new StudentDto();
 
 
@@ -23,5 +25,6 @@ studentDto.DisplayCLassroom();
 
 studentDto.DisplayAge();
 
-var summary = BenchmarkRunner.Run(typeof(BenchmarkTest));
+
+//var summary = BenchmarkRunner.Run(typeof(BenchmarkTest));
 
