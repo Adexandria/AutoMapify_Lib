@@ -7,7 +7,7 @@ namespace Automapify.Services
     /// </summary>
     /// <typeparam name="TSource">Source object</typeparam>
     /// <typeparam name="TDestination">Destination object</typeparam>
-    public class MapifyConfiguration<TSource,TDestination> 
+    public class MapifyConfiguration
     {
         /// <summary>
         /// A constructor
