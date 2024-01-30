@@ -15,11 +15,11 @@
         public MapPropertyAttribute(Type type,string propertyName)
         {
             if (string.IsNullOrEmpty(propertyName) || string.IsNullOrWhiteSpace(propertyName))
-                throw new ArgumentNullException("property name", "property name is invalid");
+                throw new ArgumentNullException($"{propertyName}", "property name is invalid");
 
             PropertyName = propertyName;
 
-            SourceType = type ?? throw new ArgumentNullException("field name", "Field name is invalid");
+            SourceType = type ?? throw new ArgumentNullException($"{type}", "Invalid type");
         }
 
         /// <summary>
@@ -30,7 +30,7 @@
         public MapPropertyAttribute(string propertyName)
         {
             if (string.IsNullOrEmpty(propertyName) || string.IsNullOrWhiteSpace(propertyName))
-                throw new ArgumentNullException("property name", "property name is invalid");
+                throw new ArgumentNullException($"{propertyName}", "property name is invalid");
 
             PropertyName = propertyName;
         }

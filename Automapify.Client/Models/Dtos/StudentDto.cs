@@ -6,7 +6,6 @@ namespace Automapify.Client.Models.Dtos
     public class StudentDto
     {
         public int Id { get; set; }
-
         public string Name { get; set; }
         public int Age { get; set; }
         public DateTime DOB { get; set; }
@@ -30,5 +29,4 @@ namespace Automapify.Client.Models.Dtos
             Console.WriteLine(Age);
         }
     }
-
 }

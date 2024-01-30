@@ -14,7 +14,10 @@ namespace Automapify.Client
     {
         public BenchmarkTest()
         {
-            _student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1");
+            _student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1")
+            {
+                Classroom = new Classroom("Jss2")
+            };
         }
 
         [Benchmark]
