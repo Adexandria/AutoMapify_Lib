@@ -1,0 +1,33 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Publish .NET to nuget
+
+on:
+  push:
+    branches: [ "master" ]
+env:
+   output_path:  'bin/Release/net6.0/publish/'
+   major_version: 1
+   minor_version: 0
+   patch_version: 0
+   build_number: ${{ github.run_number }}
+jobs:
+  build:
+  
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore -c Release
+    - name: Pack
+      run: dotnet pack -c Release  --no-restore  --output ${{env.output_path}} -p:PackageVersion=${{ env.major_version }}.${{ env.minor_version }}.${{ env.build_number }}
+    - name: Publish to nuget
+      run: dotnet nuget push ${{{output_path}}Automapify.${{env.major_version}}.${{env.minor_version}}.${{env.build_number}} --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
