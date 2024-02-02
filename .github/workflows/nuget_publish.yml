@@ -32,4 +32,4 @@ jobs:
     - name: Pack
       run: dotnet pack Automapify/Automapify.csproj -c Release  --no-restore  --output ${{env.output_path}} -p:PackageVersion=${{ env.major_version }}.${{ env.minor_version }}.${{ env.build_number }}
     - name: Publish to nuget
-      run: dotnet nuget push '/home/runner/work/Automapify_Lib/Automapify_Lib/bin/Release/net6.0/*.nupkg' --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push '/home/runner/work/AutoMapify_Lib/AutoMapify_Lib/bin/Release/net6.0/*.nupkg' --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
