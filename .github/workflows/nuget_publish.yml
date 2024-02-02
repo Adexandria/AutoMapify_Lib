@@ -9,7 +9,7 @@ on:
     paths-ignore:
      - 'README.md'
 env:
-   output_path: 'AutoMapify_Lib/AutoMapify_Lib/bin/Release/net6.0/'
+   output_path: 'bin/Release/net6.0/'
    major_version: 1
    minor_version: 0
    patch_version: 0
