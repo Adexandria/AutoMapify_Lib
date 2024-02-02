@@ -4,10 +4,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Company>Adeola Aderibigbe</Company>
+    <Description>This dotnet library facilitates object mappings without the need for service setup or configuration</Description>
+    <RepositoryUrl>https://github.com/Adeola-Aderibigbe/AutoMapify_Lib</RepositoryUrl>
+    <PackageTags>.net 6.0, mapping</PackageTags>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-  </ItemGroup>
-
 </Project>
