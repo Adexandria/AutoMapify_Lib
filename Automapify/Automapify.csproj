@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,6 +7,7 @@
     <Company>Adeola Aderibigbe</Company>
     <Description>This dotnet library facilitates object mappings without the need for service setup or configuration</Description>
     <RepositoryUrl>https://github.com/Adeola-Aderibigbe/AutoMapify_Lib</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageTags>.net 6.0, mapping</PackageTags>
   </PropertyGroup>
 </Project>
