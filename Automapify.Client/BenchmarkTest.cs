@@ -2,11 +2,6 @@
 using Automapify.Client.Models.Dtos;
 using Automappify.Services;
 using BenchmarkDotNet.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Automapify.Client
 {
@@ -18,6 +13,8 @@ namespace Automapify.Client
             {
                 Classroom = new Classroom("Jss2")
             };
+
+            _students = new List<Student> { _student };
         }
 
         [Benchmark]
@@ -29,10 +26,30 @@ namespace Automapify.Client
         }
 
         [Benchmark]
+        public void MapToExistingObjects()
+        {
+            var studentDto = new List<StudentDto>();
+            var classroom = new List<Classroom> 
+            {
+                new("Jss2"),
+                new("Jss3")
+            };
+
+            studentDto.Map(classroom);
+        }
+
+        [Benchmark]
         public void MapToAnExistingObjectWithConfig()
         {
             var studentDto = new StudentDto();
             studentDto.Map(_student, MappingService.StudentConfig());
+        }
+
+        [Benchmark]
+        public void MapToAnExistingObjectsWithConfig()
+        {
+            var studentDto = new List<StudentDto>();
+            studentDto.Map(_students, MappingService.StudentConfig());
         }
 
         [Benchmark]
@@ -42,10 +59,25 @@ namespace Automapify.Client
         }
 
         [Benchmark]
+        public List<StudentDto> MapToNewObjects()
+        {
+            return _students.Map<List<Student>, List<StudentDto>>();
+        }
+
+
+        [Benchmark]
         public StudentDto MapToNewObjectWithConfig()
         {
             return _student.Map<Student, StudentDto>(MappingService.StudentConfig());
         }
+
+        [Benchmark]
+        public List<StudentDto> MapToNewObjectsWithConfig()
+        {
+            return _students.Map<List<Student>, List<StudentDto>>(MappingService.StudentConfig());
+        }
+
+        private readonly List<Student> _students;
 
         private readonly Student _student;
     }
