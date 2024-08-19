@@ -7,7 +7,8 @@ namespace Automapify.Client
 {
     public class BenchmarkTest
     {
-        public BenchmarkTest()
+        [GlobalSetup]
+        public void Setup() 
         {
             _student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1")
             {
@@ -21,21 +22,14 @@ namespace Automapify.Client
         public void MapToAnExistingObject()
         {
             var studentDto = new StudentDto();
-            var classroom = new Classroom("Jss2");
-            studentDto.Map(classroom);
+            studentDto.Map(_student);
         }
 
         [Benchmark]
         public void MapToExistingObjects()
         {
             var studentDto = new List<StudentDto>();
-            var classroom = new List<Classroom> 
-            {
-                new("Jss2"),
-                new("Jss3")
-            };
-
-            studentDto.Map(classroom);
+            studentDto.Map(_student);
         }
 
         [Benchmark]
@@ -77,8 +71,8 @@ namespace Automapify.Client
             return _students.Map<List<Student>, List<StudentDto>>(MappingService.StudentConfig());
         }
 
-        private readonly List<Student> _students;
+        private List<Student> _students;
 
-        private readonly Student _student;
+        private Student _student;
     }
 }

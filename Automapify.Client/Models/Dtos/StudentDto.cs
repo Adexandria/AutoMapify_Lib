@@ -10,6 +10,8 @@ namespace Automapify.Client.Models.Dtos
         public int Age { get; set; }
         public DateTime DOB { get; set; }
         public bool IsDeleted { get; set; }
+
+        [MapProperty(typeof(Classroom),"Room")]
         public string Classroom { get; set; }
 
         [MapProperty("Classroom")]

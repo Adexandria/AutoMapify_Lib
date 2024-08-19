@@ -4,6 +4,11 @@ using Automapify.Client;
 using Automapify.Client.Models;
 using Automapify.Client.Models.Dtos;
 using Automappify.Services;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Toolchains.InProcess.Emit;
+using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 
 // Set up student and classroom data
 var student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1");
@@ -61,5 +66,11 @@ foreach (var item in newStudentDtos)
     item.DisplayAge();
 }
 
-//var summary = BenchmarkRunner.Run(typeof(BenchmarkTest));
+var config = DefaultConfig.Instance
+    .AddJob(Job
+         .MediumRun
+         .WithLaunchCount(1)
+         .WithToolchain(InProcessEmitToolchain.Instance));
+
+//var summary = BenchmarkRunner.Run(typeof(BenchmarkTest),config);
 
