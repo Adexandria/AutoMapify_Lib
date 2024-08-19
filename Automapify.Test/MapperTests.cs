@@ -40,6 +40,20 @@ namespace Automapify.Test
         }
 
         [Test]
+        public void ShouldMapFromSourceObjectToNewObjectsUsingAttributes()
+        {
+            var classroomDtos = TestClassroom.Map<Classroom, List<ClassroomDto>>();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(TestClassroom.Name, Is.EqualTo(classroomDtos.FirstOrDefault().Name));
+                Assert.That(TestClassroom.NumberOfStudents, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfStudents));
+                Assert.That(TestClassroom.NumberOfTeachers, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfLecturers));
+                Assert.IsTrue(classroomDtos.Any());
+            });
+        }
+
+        [Test]
         public void ShouldMapFromSourceObjectToNewObjectUsingConfiguration()
         {
             var classroomDto = TestClassroom.Map<Classroom,ClassroomDto>(MapifyConfiguration);
@@ -60,6 +74,22 @@ namespace Automapify.Test
         public void ShouldMapFromSourceObjectsToNewObjectsUsingConfiguration()
         {
             var classroomDtos = TestClassrooms.Map<List<Classroom>, List<ClassroomDto>>(MapifyConfiguration);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(TestClassroom.Name, Is.EqualTo(classroomDtos.FirstOrDefault().Name));
+                Assert.That(TestClassroom.NumberOfStudents, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfStudents));
+                Assert.That(TestClassroom.NumberOfTeachers, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfLecturers));
+                Assert.That(TestClassroom.ClassCode.ToString(), Is.EqualTo(classroomDtos.FirstOrDefault().Code));
+                Assert.That(classroomDtos.FirstOrDefault().IsActive, Is.True);
+                Assert.That(TestClassroom.Courses.Select(s => s.LeadLecturer.Name).Single(), Is.EqualTo(classroomDtos.FirstOrDefault().LeadLecturers.Single()));
+            });
+        }
+
+        [Test]
+        public void ShouldMapFromSourceObjectToNewObjectsUsingConfiguration()
+        {
+            var classroomDtos = TestClassroom.Map<Classroom, List<ClassroomDto>>(MapifyConfiguration);
 
             Assert.Multiple(() =>
             {
@@ -102,6 +132,21 @@ namespace Automapify.Test
             });
         }
 
+        [Test]
+        public void ShouldMapFromSourceObjectToExistingObjectsUsingAttributes()
+        {
+            var classroomDtos = new List<ClassroomDto>();
+
+            classroomDtos.Map(TestClassroom);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(TestClassroom.Name, Is.EqualTo(classroomDtos.FirstOrDefault().Name));
+                Assert.That(TestClassroom.NumberOfStudents, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfStudents));
+                Assert.That(TestClassroom.NumberOfTeachers, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfLecturers));
+            });
+        }
+
 
         [Test]
         public void ShouldMapFromSourceObjectsToExistingObjectsUsingConfiguration()
@@ -121,6 +166,24 @@ namespace Automapify.Test
             });
         }
 
+
+        [Test]
+        public void ShouldMapFromSourceObjectToExistingObjectsUsingConfiguration()
+        {
+            var classroomDtos = new List<ClassroomDto>();
+
+            classroomDtos.Map(TestClassroom, MapifyConfiguration);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(TestClassroom.Name, Is.EqualTo(classroomDtos.FirstOrDefault().Name));
+                Assert.That(TestClassroom.NumberOfStudents, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfStudents));
+                Assert.That(TestClassroom.NumberOfTeachers, Is.EqualTo(classroomDtos.FirstOrDefault().NoOfLecturers));
+                Assert.That(TestClassroom.ClassCode.ToString(), Is.EqualTo(classroomDtos.FirstOrDefault().Code));
+                Assert.That(classroomDtos.FirstOrDefault().IsActive, Is.True);
+                Assert.That(TestClassroom.Courses.Select(s => s.LeadLecturer.Name).Single(), Is.EqualTo(classroomDtos.FirstOrDefault().LeadLecturers.Single()));
+            });
+        }
 
 
         [Test]
