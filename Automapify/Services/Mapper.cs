@@ -2,6 +2,7 @@
 using Automapify.Services;
 using Automapify.Services.Attributes;
 using Automapify.Services.Utilities;
+using System.Collections;
 using System.Reflection;
 
 namespace Automappify.Services
@@ -21,13 +22,29 @@ namespace Automappify.Services
         /// <param name="sourceObj">Object to gather information or data from</param>
         public static void Map<TSource,TDestination>(this TDestination destinationObj, TSource sourceObj, MapifyConfiguration mapifyConfiguration = null)
         {
-            var destinationType = destinationObj.GetType();
-
-            var destinationProperties = destinationType.GetProperties();
-
-            var sourceProperties = sourceObj.GetType().GetProperties();
             try
             {
+                var destinationType = destinationObj.GetType();
+
+                var isEnumerable = IsEnumerable(destinationType);
+
+                if (isEnumerable)
+                {
+                    destinationType = destinationType.GetGenericArguments().FirstOrDefault();
+
+                    var destination = destinationObj as IList;
+
+                    MapCollection<TSource, TDestination>(sourceObj, destination, destinationType, mapifyConfiguration);
+
+                    destinationObj = (TDestination)destination;
+
+                    return;
+                }   
+
+                var destinationProperties = destinationType.GetProperties();
+
+                var sourceProperties = sourceObj.GetType().GetProperties();
+            
                 var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
 
                 MapProperties(destinationProperties, sourceProperties,
@@ -50,16 +67,33 @@ namespace Automappify.Services
         /// <returns>Destination object</returns>
         public static TDestination Map<TSource, TDestination>(this TSource sourceObj, MapifyConfiguration mapifyConfiguration = null)
         {
-            var destinationObj = Activator.CreateInstance<TDestination>();
-
-            var destinationType = destinationObj.GetType();
-
-            var destinationProperties = destinationType.GetProperties();
-
-            var sourceProperties = sourceObj.GetType().GetProperties();
-
             try
             {
+                var destinationType = typeof(TDestination);
+
+                var isEnumerable = IsEnumerable(destinationType);
+
+                if (isEnumerable)
+                {
+                    destinationType = destinationType.GetGenericArguments().FirstOrDefault();
+
+                    Type openType = typeof(List<>);
+
+                    Type target = openType.MakeGenericType(new[]{ destinationType });
+
+                    var destination = (TDestination)Activator.CreateInstance(target) as IList;
+
+                    MapCollection<TSource,TDestination>(sourceObj, destination, destinationType, mapifyConfiguration);
+
+                    return (TDestination)destination;
+                }
+
+                TDestination destinationObj = Activator.CreateInstance<TDestination>();
+
+                var destinationProperties = destinationType.GetProperties();
+
+                var sourceProperties = sourceObj.GetType().GetProperties();
+
                 var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
 
                 MapProperties(destinationProperties, sourceProperties,
@@ -74,6 +108,44 @@ namespace Automappify.Services
             }
         }
 
+        private static void MapCollection<TSource,TDestination>(TSource sourceObj, IList destinationObj ,Type destinationType, MapifyConfiguration mapifyConfiguration = null)
+        {
+            var sourceType = typeof(TSource);
+
+            var destinationProperties = destinationType.GetProperties();
+
+            var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
+
+            PropertyInfo[] sourceProperties;
+
+            dynamic destination = Activator.CreateInstance(destinationType);
+
+            if (sourceObj is ICollection sourceCollection)
+            {
+                sourceProperties = sourceType.GetGenericArguments().FirstOrDefault().GetProperties();
+
+                foreach (var source in sourceCollection)
+                {
+                    destination = Activator.CreateInstance(destinationType);
+
+                    MapProperties(destinationProperties, sourceProperties,
+                    mapifyConfiguration, source, destination,
+                    mappingAttributes);
+
+                    destinationObj.Add(destination);
+                }
+            }
+            else
+            {
+                sourceProperties = sourceType.GetProperties();
+
+                MapProperties(destinationProperties, sourceProperties,
+                mapifyConfiguration, sourceObj, destination,
+                mappingAttributes);
+
+                destinationObj.Add(destination);
+            }
+        }
 
         private static void MapProperties<TSource,TDestination>(PropertyInfo[] destinationProperties,
             PropertyInfo[] sourceProperties,MapifyConfiguration mapifyConfiguration,
@@ -141,6 +213,16 @@ namespace Automappify.Services
             }
 
             return default;
+        }
+
+        private static bool IsEnumerable(Type type)
+        {
+            return (type.GetInterface(nameof(IEnumerable)) != null);
+        }
+
+        private static bool IsEnumerable<type>()
+        {
+            return typeof(type).GetInterface(nameof(IEnumerable)) != null;
         }
     }
 }

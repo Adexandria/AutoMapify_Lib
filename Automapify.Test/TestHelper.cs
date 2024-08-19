@@ -9,6 +9,7 @@ namespace Automapify.Test
         protected virtual void Setup()
         {
             TestClassroom = SetUpInstance();
+            TestClassrooms = SetUpInstances();
             SetupConfiguration();
         }
         private Classroom SetUpInstance()
@@ -17,7 +18,16 @@ namespace Automapify.Test
                 .SetUpCourse("Economics100","Ec100","Adeola");
         }
 
-        
+
+        private List<Classroom> SetUpInstances()
+        {
+            return new List<Classroom>() 
+            { 
+                TestClassroom
+            };
+
+        }
+
         private MapifyConfiguration SetupConfiguration()
         {
             MapifyConfiguration = new MapifyConfigurationBuilder<Classroom,ClassroomDto>()
@@ -32,5 +42,7 @@ namespace Automapify.Test
         }
         protected MapifyConfiguration MapifyConfiguration { get; set; }
         protected Classroom TestClassroom { get; set; }
+
+        protected List<Classroom> TestClassrooms { get; set; }
     }
 }
