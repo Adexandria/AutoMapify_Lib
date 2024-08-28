@@ -17,6 +17,14 @@ namespace Automapify.Services.Extensions
             return !source.Contains(parameter);
         }
 
+        public static bool Contains(this IEnumerable<string> source, string firstParameter, string secondParameter)
+        {
+            if (source.Count() == 0)
+                return true;
+
+            return source.Contains(firstParameter) && source.Contains(secondParameter);
+        }
+
         public static bool NotStartsWith(this string source, string parameter)
         {
             if (string.IsNullOrEmpty(source))

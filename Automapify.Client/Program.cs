@@ -8,7 +8,6 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Toolchains.InProcess.Emit;
-using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 
 // Set up student and classroom data
 var student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1");
@@ -16,9 +15,13 @@ var student = new Student(1, "Adeola", "Aderibigbe", "11/12/2000", "jss1");
 var classroom = new Classroom("Jss2");
 
 student.Classroom = classroom;
+student.AddClassroom("Jss3");
+
+student.AddTeacher("Violet", "James");
 
 // Map a list of students to a list of student dtos using mapping configuration
 var students = new List<Student>() { student };
+
 
 var studentDtos = student.Map<Student, List<StudentDto>>(MappingService.StudentConfig());
 
@@ -65,12 +68,12 @@ foreach (var item in newStudentDtos)
 
     item.DisplayAge();
 }
-
+/*
 var config = DefaultConfig.Instance
     .AddJob(Job
          .MediumRun
          .WithLaunchCount(1)
          .WithToolchain(InProcessEmitToolchain.Instance));
 
-//var summary = BenchmarkRunner.Run(typeof(BenchmarkTest),config);
+var summary = BenchmarkRunner.Run(typeof(BenchmarkTest), config);*/
 
