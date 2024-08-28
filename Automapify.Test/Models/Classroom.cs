@@ -8,6 +8,10 @@ namespace Automapify.Test.Models
 {
     public class Classroom
     {
+        public Classroom()
+        {
+            
+        }
         public Classroom(string name,int noOfStudents, int noOfTeachers,string classCode)
         {
             Id = 1;
