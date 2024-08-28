@@ -8,6 +8,10 @@ namespace Automapify.Client.Models.Dtos
 {
     public class Classroom
     {
+        public Classroom()
+        {
+                
+        }
         public Classroom(string room)
         {
             Room = room;

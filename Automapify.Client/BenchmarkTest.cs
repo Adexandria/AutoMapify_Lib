@@ -14,6 +14,7 @@ namespace Automapify.Client
             {
                 Classroom = new Classroom("Jss2")
             };
+            _student.AddTeacher("Adeola", "Ade");
 
             _students = new List<Student> { _student };
         }

@@ -2,6 +2,10 @@
 {
     public class Course
     {
+        public Course()
+        {
+            
+        }
         public Course(string name, string courseCode)
         {
             Id = 1;

@@ -4,12 +4,23 @@ namespace Automapify.Models
 {
     public class MapifyTuple
     {
-        public MapifyTuple(string destinationMemberName, LambdaExpression expression)
+        public MapifyTuple(List<string> destinationMembers, string sourceName ,LambdaExpression sourceExpression)
         {
-            DestinationMemberName = destinationMemberName;
-            SourceExpression = expression.Compile();
+            DestinationMemberNames = destinationMembers;
+            SourceMemberName = sourceName;
+            SourceExpression = sourceExpression.Compile();
         }
-        public string DestinationMemberName { get; set; }
+        public MapifyTuple(string destinationMember, string sourceName, LambdaExpression sourceExpression)
+        {
+            DestinationMemberNames.Add(destinationMember);
+            SourceMemberName = sourceName;
+            SourceExpression = sourceExpression.Compile();
+        }
+
+
+        public List<string> DestinationMemberNames { get; set; } = new List<string>();
+
+        public string SourceMemberName { get; set; }
         public Delegate SourceExpression { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Automapify.Models;
 using Automapify.Services;
 using Automapify.Services.Attributes;
+using Automapify.Services.Extensions;
 using Automapify.Services.Utilities;
 using System.Collections;
 using System.Reflection;
@@ -26,6 +27,8 @@ namespace Automappify.Services
             {
                 var destinationType = destinationObj.GetType();
 
+                var sourceType = typeof(TSource);
+
                 var isEnumerable = IsEnumerable(destinationType);
 
                 if (isEnumerable)
@@ -34,7 +37,7 @@ namespace Automappify.Services
 
                     var destination = destinationObj as IList;
 
-                    MapCollection<TSource, TDestination>(sourceObj, destination, destinationType, mapifyConfiguration);
+                    MapCollection(sourceObj, destination, destinationType, sourceType,mapifyConfiguration);
 
                     destinationObj = (TDestination)destination;
 
@@ -43,7 +46,7 @@ namespace Automappify.Services
 
                 var destinationProperties = destinationType.GetProperties();
 
-                var sourceProperties = sourceObj.GetType().GetProperties();
+                var sourceProperties = sourceType.GetProperties();
             
                 var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
 
@@ -71,6 +74,8 @@ namespace Automappify.Services
             {
                 var destinationType = typeof(TDestination);
 
+                var sourceType = typeof(TSource);
+
                 var isEnumerable = IsEnumerable(destinationType);
 
                 if (isEnumerable)
@@ -83,7 +88,7 @@ namespace Automappify.Services
 
                     var destination = (TDestination)Activator.CreateInstance(target) as IList;
 
-                    MapCollection<TSource,TDestination>(sourceObj, destination, destinationType, mapifyConfiguration);
+                    MapCollection(sourceObj, destination, destinationType,sourceType ,mapifyConfiguration);
 
                     return (TDestination)destination;
                 }
@@ -92,7 +97,7 @@ namespace Automappify.Services
 
                 var destinationProperties = destinationType.GetProperties();
 
-                var sourceProperties = sourceObj.GetType().GetProperties();
+                var sourceProperties = sourceType.GetProperties();
 
                 var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
 
@@ -108,10 +113,14 @@ namespace Automappify.Services
             }
         }
 
-        private static void MapCollection<TSource,TDestination>(TSource sourceObj, IList destinationObj ,Type destinationType, MapifyConfiguration mapifyConfiguration = null)
+        private static void MapCollection<TSource>(TSource sourceObj, IList destinationObj ,Type destinationType,
+            Type sourceType,
+            MapifyConfiguration mapifyConfiguration = null)
         {
-            var sourceType = typeof(TSource);
-
+            if(sourceObj == null)
+            {
+                return;
+            }
             var destinationProperties = destinationType.GetProperties();
 
             var mappingAttributes = destinationType.GetAttributes<MapPropertyAttribute>();
@@ -147,6 +156,21 @@ namespace Automappify.Services
             }
         }
 
+
+        private static void MapCollection(object? sourceObj, IList destination,string destinationName,
+            MapifyConfiguration mapifyConfiguration = null)
+        {
+             var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationName);
+             if( sourceObj is ICollection sourceCollection)
+             {
+                foreach(var source in sourceCollection)
+                {
+                    var result = propertyExpression?.DynamicInvoke(source);
+                    destination.Add(result);
+                }
+             }
+        }
+
         private static void MapProperties<TSource,TDestination>(PropertyInfo[] destinationProperties,
             PropertyInfo[] sourceProperties,MapifyConfiguration mapifyConfiguration,
             TSource sourceObj, TDestination destinationObj,Dictionary<string, MapPropertyAttribute[]> mappingAttributes)
@@ -154,18 +178,45 @@ namespace Automappify.Services
             foreach (var destinationProperty in destinationProperties)
             {
                 object propertyValue = null;
-                var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name);
-                if (propertyExpression != null)
+
+                if (destinationProperty.PropertyType.GetGenericArguments().FirstOrDefault() is Type type && mapifyConfiguration != null)
                 {
-                    propertyValue = propertyExpression.DynamicInvoke(sourceObj);
+                    Type openType = typeof(List<>);
+
+                    Type target = openType.MakeGenericType(new[] { type });
+
+                    var destination = Activator.CreateInstance(target) as IList;
+
+                    var config = GetSourceConfiguration(mapifyConfiguration?.MapifyTuples, destinationProperty.Name, sourceProperties);
+
+                    var sourceProperty = sourceProperties.Where(s => config.MapifyTuples.Any(x => x.SourceMemberName == s.Name)).FirstOrDefault();
+
+                    var sourcePropertyValue = sourceProperty.GetValue(sourceObj);
+
+                    if (type.Namespace.StartsWith("System"))
+                    {
+                        MapCollection(sourcePropertyValue, destination, destinationProperty.Name, config);
+                    }
+                    else
+                    {
+                        MapCollection(sourcePropertyValue, destination, type, sourcePropertyValue?.GetType(), config);
+                    }
+
+                    propertyValue = destination;
+                }
+
+                else if (GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty) is PropertyInfo propertyInfo)
+                {
+                    propertyValue = propertyInfo.GetValue(sourceObj);
+                }
+                else if (GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name) is Delegate propertyExpression)
+                {
+                    propertyValue = propertyExpression?.DynamicInvoke(sourceObj);
+
                 }
                 else
                 {
-                    var sourceProperty = GetProperyInfo<TSource>(mappingAttributes, sourceProperties, destinationProperty);
-                    if (sourceProperty != null)
-                    {
-                        propertyValue = sourceProperty.GetValue(sourceObj);
-                    }
+                    continue;
                 }
 
                 if (propertyValue != null)
@@ -180,23 +231,22 @@ namespace Automappify.Services
             PropertyInfo sourceProperty = null;
 
             mappingAttributes.TryGetValue(destinationProperty.Name, out MapPropertyAttribute[] attributes);
-            if (attributes != null)
+            if (attributes == null)
             {
-                var currentAttribute = attributes.Where(s => s.SourceType == typeof(TSource)).FirstOrDefault();
-                if (currentAttribute == null)
-                {
-                    var attribute = attributes.FirstOrDefault();
-                    sourceProperty = sourceProperties.Where(s => s.Name == attribute.PropertyName).FirstOrDefault();
-                }
-                else
-                {
-                    sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.PropertyName).FirstOrDefault();
-                }
+                return sourceProperties.Where(s => s.Name == destinationProperty.Name && s.PropertyType == destinationProperty.PropertyType).FirstOrDefault();
+            }
+           
+            var currentAttribute = attributes.Where(s => s.SourceType == destinationProperty.PropertyType).FirstOrDefault();
+            if (currentAttribute != null)
+            {
+                sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.PropertyName).FirstOrDefault();
             }
             else
             {
-                sourceProperty = sourceProperties.Where(s => s.Name == destinationProperty.Name).FirstOrDefault();
+                currentAttribute = attributes.FirstOrDefault();
+                sourceProperty = sourceProperties.Where(s => s.Name == currentAttribute.PropertyName).FirstOrDefault();
             }
+
             return sourceProperty;
         }
 
@@ -205,11 +255,25 @@ namespace Automappify.Services
         {
             if (mapifyTuples == null)
                 return default;
-
-            var memberExpr = mapifyTuples.Where(s => s.DestinationMemberName == propertyName).FirstOrDefault();
-            if(memberExpr != null)
+            
+            MapifyTuple mapifyTuple = mapifyTuples.Where(s => s.DestinationMemberNames.Contains(propertyName)).FirstOrDefault();
+            if(mapifyTuple != null)
             {
-                return memberExpr.SourceExpression;
+                return mapifyTuple.SourceExpression;
+            }
+
+            return default;
+        }
+
+        private static MapifyConfiguration GetSourceConfiguration(IList<MapifyTuple> mapifyTuples,string sourcePropertyName, PropertyInfo[] properties)
+        {
+            if (mapifyTuples == null)
+                return default;
+
+            var newMapifyTuples = mapifyTuples.Where(s => s.DestinationMemberNames.Contains(sourcePropertyName) && properties.Any(p => s.SourceMemberName.Contains(p.Name))).ToList();
+            if (newMapifyTuples.Count > 0)
+            {
+                return new MapifyConfiguration(newMapifyTuples);
             }
 
             return default;
