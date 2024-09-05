@@ -12,8 +12,6 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
-    ...
     <None Include="docs\readme.md" Pack="true" PackagePath="\"/>
-    ...
   </ItemGroup>
 </Project>
