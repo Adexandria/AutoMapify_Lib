@@ -69,11 +69,11 @@ foreach (var item in newStudentDtos)
     item.DisplayAge();
 }
 
-var config = DefaultConfig.Instance
+/*var config = DefaultConfig.Instance
     .AddJob(Job
          .MediumRun
          .WithLaunchCount(1)
          .WithToolchain(InProcessEmitToolchain.Instance));
 
-var summary = BenchmarkRunner.Run(typeof(BenchmarkTest), config);
+var summary = BenchmarkRunner.Run(typeof(BenchmarkTest), config);*/
 
