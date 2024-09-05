@@ -113,6 +113,15 @@ namespace Automappify.Services
             }
         }
 
+        /// <summary>
+        /// Handles mapping for collection
+        /// </summary>
+        /// <typeparam name="TSource">Type of the source</typeparam>
+        /// <param name="sourceObj">Source object</param>
+        /// <param name="destinationObj">Destination object</param>
+        /// <param name="destinationType">Destination type</param>
+        /// <param name="sourceType">Source Type</param>
+        /// <param name="mapifyConfiguration">Mapify configuration</param>
         private static void MapCollection<TSource>(TSource sourceObj, IList destinationObj ,Type destinationType,
             Type sourceType,
             MapifyConfiguration mapifyConfiguration = null)
@@ -156,17 +165,26 @@ namespace Automappify.Services
             }
         }
 
+        /// <summary>
+        /// Maps system collection
+        /// </summary>
+        /// <param name="sourceObj">Source object</param>
+        /// <param name="destination">Destination object</param>
+        /// <param name="destinationName">Destination name</param>
+        /// <param name="mapifyConfiguration">Mapify configuration</param>
 
         private static void MapCollection(object? sourceObj, IList destination,string destinationName,
             MapifyConfiguration mapifyConfiguration = null)
         {
-             var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationName);
              if( sourceObj is ICollection sourceCollection)
              {
-                foreach(var source in sourceCollection)
+                var propertyExpression = GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationName);
+                foreach (var source in sourceCollection)
                 {
                     var result = propertyExpression?.DynamicInvoke(source);
-                    destination.Add(result);
+
+                    if (result != null)
+                        destination.Add(result);
                 }
              }
         }
@@ -178,6 +196,16 @@ namespace Automappify.Services
             foreach (var destinationProperty in destinationProperties)
             {
                 object propertyValue = null;
+
+                if (destinationProperty.GetCustomAttribute<IgnoreAttribute>() != null)
+                    continue;
+
+                var isIgnored = mapifyConfiguration?.MapifyTuples.Where(s => s.IsIgnored && s.DestinationMemberNames.Contains(destinationProperty.Name)).Select(s => s.IsIgnored).FirstOrDefault();
+                if (isIgnored.GetValueOrDefault())
+                {
+                    continue;
+                }
+
 
                 if (destinationProperty.PropertyType.GetGenericArguments().FirstOrDefault() is Type type && mapifyConfiguration != null)
                 {
@@ -212,7 +240,6 @@ namespace Automappify.Services
                 else if (GetSourceExpression(mapifyConfiguration?.MapifyTuples, destinationProperty.Name) is Delegate propertyExpression)
                 {
                     propertyValue = propertyExpression?.DynamicInvoke(sourceObj);
-
                 }
                 else
                 {
@@ -254,8 +281,10 @@ namespace Automappify.Services
         private static Delegate GetSourceExpression(IList<MapifyTuple> mapifyTuples, string propertyName)
         {
             if (mapifyTuples == null)
+            {
                 return default;
-            
+            }
+                
             MapifyTuple mapifyTuple = mapifyTuples.Where(s => s.DestinationMemberNames.Contains(propertyName)).FirstOrDefault();
             if(mapifyTuple != null)
             {
@@ -267,6 +296,7 @@ namespace Automappify.Services
 
         private static MapifyConfiguration GetSourceConfiguration(IList<MapifyTuple> mapifyTuples,string sourcePropertyName, PropertyInfo[] properties)
         {
+
             if (mapifyTuples == null)
                 return default;
 
@@ -275,7 +305,6 @@ namespace Automappify.Services
             {
                 return new MapifyConfiguration(newMapifyTuples);
             }
-
             return default;
         }
 
