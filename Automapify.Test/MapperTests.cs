@@ -1,3 +1,4 @@
+using Automapify.Services;
 using Automapify.Test.Models;
 using Automappify.Services;
 
@@ -203,5 +204,44 @@ namespace Automapify.Test
                 Assert.That(TestClassroom.Courses.Select(s => s.LeadLecturer.Name).Single(), Is.EqualTo(classroomDto.LeadLecturers.Single()));
             });
         }
+
+        [Test]
+        public void ShouldMapFromSourceObjectToExistingObjectWithIgnoreAttributes()
+        {
+            var studentClassroomDto = new StudentClassroomDto();
+
+            studentClassroomDto.Map(TestClassroom);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(string.IsNullOrEmpty(studentClassroomDto.Name));
+                Assert.That(TestClassroom.NumberOfStudents, Is.EqualTo(studentClassroomDto.NoOfStudents));
+                Assert.That(TestClassroom.NumberOfTeachers, Is.EqualTo(studentClassroomDto.NoOfLecturers));
+                Assert.IsTrue(string.IsNullOrEmpty(studentClassroomDto.Code));
+            });
+        }
+
+        [Test]
+        public void ShouldMapFromSourceObjectToExistingObjectWithIgnoreConfiguration()
+        {
+            var studentClassroomDto = new StudentClassroomDto();
+
+            var testHelper = new TestHelper();
+
+            studentClassroomDto.Map(TestClassroom,testHelper.SetupIgnoreConfiguration());
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(string.IsNullOrEmpty(studentClassroomDto.Name));
+                Assert.That(TestClassroom.NumberOfStudents, Is.EqualTo(studentClassroomDto.NoOfStudents));
+                Assert.That(TestClassroom.NumberOfTeachers, Is.EqualTo(studentClassroomDto.NoOfLecturers));
+                Assert.IsTrue(string.IsNullOrEmpty(studentClassroomDto.Code));
+                Assert.That(studentClassroomDto.IsActive, Is.True);
+                Assert.That(TestClassroom.Courses.Select(s => s.LeadLecturer.Name).Single(), Is.EqualTo(studentClassroomDto.LeadLecturers.Single()));
+            });
+        }
+
+
+
     }
 }
