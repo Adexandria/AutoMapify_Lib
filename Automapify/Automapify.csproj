@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/Adeola-Aderibigbe/AutoMapify_Lib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>.net 6.0, mapping</PackageTags>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile>docs\README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docs\readme.md" Pack="true" PackagePath="\"/>
