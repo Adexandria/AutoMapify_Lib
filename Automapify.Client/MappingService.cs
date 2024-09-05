@@ -18,7 +18,7 @@ namespace Automapify.Client
                 .Map(d => d.DOB, s => s.DateOfBirth)
                 .Map(d => d.IsDeleted, s => false)
                 .Map(d => d.Teachers.MapTo(s => s.Name), s => s.Teachers.MapFrom(p => $"{p.FirstName} {p.LastName}"))
-                .Map(d => d.TeacherNames, s => s.Teachers.MapFrom(p => $"{p.FirstName} {p.LastName}"))
+                .Ignore(d=>d.TeacherNames)
                 .Map(d => d.Classrooms, s => s.Classrooms)
                 .CreateConfig();
         }

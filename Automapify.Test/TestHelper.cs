@@ -41,6 +41,19 @@ namespace Automapify.Test
                 .CreateConfig();
             return MapifyConfiguration;
         }
+
+        public MapifyConfiguration SetupIgnoreConfiguration()
+        {
+            MapifyConfiguration = new MapifyConfigurationBuilder<Classroom, ClassroomDto>()
+                .Ignore(d=>d.Name)
+                .Map(d => d.NoOfLecturers, s => s.NumberOfTeachers)
+                .Map(d => d.NoOfStudents, s => s.NumberOfStudents)
+                .Map(d => d.LeadLecturers, s => s.Courses.MapFrom(s => s.LeadLecturer.Name))
+                .Map(d => d.IsActive, s => s.NumberOfTeachers > 0 && s.NumberOfStudents > 0)
+                .Ignore(d=>d.Code)
+                .CreateConfig();
+            return MapifyConfiguration;
+        }
         protected MapifyConfiguration MapifyConfiguration { get; set; }
         protected Classroom TestClassroom { get; set; }
 

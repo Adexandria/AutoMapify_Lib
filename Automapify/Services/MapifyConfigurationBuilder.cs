@@ -23,6 +23,25 @@ namespace Automapify.Services
             return this;
         }
 
+
+
+        /// <summary>
+        /// Ignores property
+        /// </summary>
+        /// <typeparam name="DestinationMember"> destination member type</typeparam>
+        /// <param name="destinationPredicate">Destination expression</param>
+        /// <returns></returns>
+        public MapifyConfigurationBuilder<TSource,TDestination> Ignore<DestinationMember>
+            (Expression<Func<TDestination, DestinationMember>> destinationPredicate)
+        {
+            var members = GetMemberExpressionNames(destinationPredicate);
+
+            mapifyTuples.Add(new MapifyTuple(members));
+
+            return this;
+        }
+
+
         /// <summary>
         /// Get expression names from member
         /// </summary>
@@ -31,7 +50,7 @@ namespace Automapify.Services
         /// <param name="desExp">Expression</param>
         /// <returns>Names of the member</returns>
         private void CreateTuple<DestinationMember, SourceMember>
-            (Expression<Func<TDestination, DestinationMember>> destinationPredicate, Expression<Func<TSource, SourceMember>> sourcePredicate)
+            (Expression<Func<TDestination, DestinationMember>> destinationPredicate, Expression<Func<TSource, SourceMember>> sourcePredicate, bool isIgnored = false)
         {
             MemberExpression memberExpression = destinationPredicate.Body as MemberExpression;
 
@@ -41,13 +60,15 @@ namespace Automapify.Services
 
             var sourceName = GetSourceMemberExpressionName(sourcePredicate);
 
+            MapifyTuple mapifyTuple = null;
+
             if (currentMemberExpression != null)
             {
                 if (sourcePredicate.Body is MethodCallExpression sourceExpression)
                 {
                     newSourceExpression = sourcePredicate.Compile().Invoke(Activator.CreateInstance<TSource>()) as LambdaExpression;
                 }
-                mapifyTuples.Add(new MapifyTuple(currentMemberExpression?.Member?.Name, sourceName, newSourceExpression ?? sourcePredicate));
+                mapifyTuple = new MapifyTuple(currentMemberExpression?.Member?.Name, sourceName, newSourceExpression ?? sourcePredicate);
             }
             else
             {
@@ -55,10 +76,16 @@ namespace Automapify.Services
 
                 newSourceExpression = sourcePredicate.Compile().Invoke(Activator.CreateInstance<TSource>()) as LambdaExpression;
 
-                mapifyTuples.Add(new MapifyTuple(destinationName, sourceName, newSourceExpression));
+                mapifyTuple = new MapifyTuple(destinationName, sourceName, newSourceExpression);
             }
-        }
 
+            if (isIgnored)
+            {
+                mapifyTuple.Ignore();
+            }
+
+            mapifyTuples.Add(mapifyTuple);
+        }
 
         /// <summary>
         /// Get expression names from member

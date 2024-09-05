@@ -17,10 +17,22 @@ namespace Automapify.Models
             SourceExpression = sourceExpression.Compile();
         }
 
+        public MapifyTuple(List<string> destinationMembers)
+        {
+            DestinationMemberNames = destinationMembers;
+
+            IsIgnored = true;
+        }
+
+        public void Ignore()
+        {
+            IsIgnored = true;
+        }
 
         public List<string> DestinationMemberNames { get; set; } = new List<string>();
 
-        public string SourceMemberName { get; set; }
+        public string SourceMemberName { get; set; } = string.Empty;
         public Delegate SourceExpression { get; set; }
+        public bool IsIgnored { get; set; } = false;
     }
 }

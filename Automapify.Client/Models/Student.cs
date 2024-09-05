@@ -1,4 +1,5 @@
 ﻿using Automapify.Client.Models.Dtos;
+using Automapify.Services.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
